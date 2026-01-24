@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مرسل ويب هkkkkوك المتكرر مع إيمبد</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #8b5cf6;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --dark-bg: #1f2937;
+            --light-bg: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            padding: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: var(--light-bg);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            border: none;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        textarea {
+            min-height: 120px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+        }
+        
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .color-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .embed-preview {
+            background: var(--light-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid #4f46e5;
+            margin: 20px 0;
+            min-height: 100px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            justify-content: center;
+            min-width: 200px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .status-container {
+            margin-top: 30px;
+        }
+        
+        .status-item {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .status-success {
+            background: #d1fae5;
+            border-left: 5px solid var(--success-color);
+        }
+        
+        .status-error {
+            background: #fee2e2;
+            border-left: 5px solid var(--danger-color);
+        }
+        
+        .status-info {
+            background: #e0f2fe;
+            border-left: 5px solid #0ea5e9;
+        }
+        
+        .icon {
+            font-size: 20px;
+        }
+        
+        .log-container {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--dark-bg);
+            border-radius: 10px;
+            color: white;
+            font-family: monospace;
+        }
+        
+        .counter {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 مرسل ويب هوك المتقدم مع إيمبد</h1>
+            <p>أرسل ويب هوك بشكل متكرر مع إمكانية إضافة إيمبد متعدد الألوان</p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" data-tab="basic">⚡ الإعدادات الأساسية</button>
+            <button class="tab" data-tab="embed">🎨 إعدادات الإيمبد</button>
+            <button class="tab" data-tab="schedule">⏰ جدولة الإرسال</button>
+        </div>
+        
+        <!-- Tab 1: Basic Settings -->
+        <div class="tab-content active" id="basic-tab">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="webhookUrl">🔗 رابط ويب هوك:</label>
+                    <input type="url" id="webhookUrl" placeholder="https://discord.com/api/webhooks/..." required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="repeatCount">🔁 عدد المرات:</label>
+                    <input type="number" id="repeatCount" value="10" min="1" max="1000">
+                </div>
+                
+                <div class="form-group">
+                    <label for="intervalTime">⏱️ الفاصل الزمني (ثواني):</label>
+                    <input type="number" id="intervalTime" value="5" min="1" max="3600">
+                </div>
+                
+                <div class="form-group">
+                    <label for="httpMethod">🌐 طريقة HTTP:</label>
+                    <select id="httpMethod">
+                        <option value="POST">POST</option>
+                        <option value="GET">GET</option>
+                        <option value="PUT">PUT</option>
+                        <option value="PATCH">PATCH</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="message">💬 المحتوى (JSON أو نص):</label>
+                <textarea id="message" placeholder='{"content": "مرحبًا! هذا اختبار", "username": "مرسل الويب هوك"}'>{"content": "تم الإرسال بنجاح! 🎉", "username": "Webhook Sender"}</textarea>
+            </div>
+        </div>
+        
+        <!-- Tab 2: Embed Settings -->
+        <div class="tab-content" id="embed-tab">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="embedTitle">📌 عنوان الإيمبد:</label>
+                    <input type="text" id="embedTitle" placeholder="عنوان الرسالة">
+                </div>
+                
+                <div class="form-group">
+                    <label for="embedDescription">📝 وصف الإيمبد:</label>
+                    <textarea id="embedDescription" placeholder="وصف الرسالة هنا..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="embedColor">🎨 لون الإيمبد:</label>
+                    <div class="color-picker">
+                        <input type="color" id="embedColor" value="#4f46e5">
+                        <div class="color-preview" id="colorPreview"></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="embedFooter">🏷️ تذييل الإيمبد:</label>
+                    <input type="text" id="embedFooter" placeholder="نص التذييل">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>👁️ معاينة الإيمبد:</label>
+                <div class="embed-preview" id="embedPreview">
+                    <div style="margin-bottom: 10px; font-weight: bold;" id="previewTitle"></div>
+                    <div style="color: #666; margin-bottom: 15px;" id="previewDescription"></div>
+                    <div style="font-size: 12px; color: #999;" id="previewFooter"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab 3: Schedule Settings -->
+        <div class="tab-content" id="schedule-tab">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="startTime">🕐 وقت البدء:</label>
+                    <input type="time" id="startTime">
+                </div>
+                
+                <div class="form-group">
+                    <label for="endTime">🕚 وقت التوقف:</label>
+                    <input type="time" id="endTime">
+                </div>
+                
+                <div class="form-group">
+                    <label for="days">📅 أيام الأسبوع:</label>
+                    <select id="days" multiple style="height: 120px;">
+                        <option value="0">الأحد</option>
+                        <option value="1">الإثنين</option>
+                        <option value="2">الثلاثاء</option>
+                        <option value="3">الأربعاء</option>
+                        <option value="4">الخميس</option>
+                        <option value="5">الجمعة</option>
+                        <option value="6">السبت</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="randomDelay">🎲 تأخير عشوائي (ثواني):</label>
+                    <input type="number" id="randomDelay" value="0" min="0" max="60">
+                </div>
+            </div>
+            
+            <div class="counter">
+                <div>⏳ المدة التقديرية: <span id="estimatedTime">50 ثانية</span></div>
+                <div>📊 عدد الطلبات الإجمالي: <span id="totalRequests">10</span></div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-primary" id="startBtn">
+                <span class="icon">▶️</span>
+                بدء الإرسال المتكرر
+            </button>
+            
+            <button class="btn btn-danger" id="stopBtn" style="display: none;">
+                <span class="icon">⏹️</span>
+                إيقاف الإرسال
+            </button>
+            
+            <button class="btn btn-secondary" id="testBtn">
+                <span class="icon">🧪</span>
+                اختبار إرسال واحد
+            </button>
+            
+            <button class="btn btn-secondary" id="clearLogBtn">
+                <span class="icon">🗑️</span>
+                مسح السجل
+            </button>
+        </div>
+        
+        <div class="status-container">
+            <div id="status"></div>
+        </div>
+        
+        <div class="log-container">
+            <div style="color: #60a5fa; margin-bottom: 10px;">📋 سجل الإرسال:</div>
+            <div id="logContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // عناصر DOM
+        const webhookUrl = document.getElementById('webhookUrl');
+        const message = document.getElementById('message');
+        const repeatCount = document.getElementById('repeatCount');
+        const intervalTime = document.getElementById('intervalTime');
+        const httpMethod = document.getElementById('httpMethod');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const testBtn = document.getElementById('testBtn');
+        const clearLogBtn = document.getElementById('clearLogBtn');
+        const statusDiv = document.getElementById('status');
+        const logContent = document.getElementById('logContent');
+        
+        // عناصر الإيمبد
+        const embedTitle = document.getElementById('embedTitle');
+        const embedDescription = document.getElementById('embedDescription');
+        const embedColor = document.getElementById('embedColor');
+        const embedFooter = document.getElementById('embedFooter');
+        const colorPreview = document.getElementById('colorPreview');
+        const embedPreview = document.getElementById('embedPreview');
+        const previewTitle = document.getElementById('previewTitle');
+        const previewDescription = document.getElementById('previewDescription');
+        const previewFooter = document.getElementById('previewFooter');
+        
+        // عناصر الجدولة
+        const startTime = document.getElementById('startTime');
+        const endTime = document.getElementById('endTime');
+        const days = document.getElementById('days');
+        const randomDelay = document.getElementById('randomDelay');
+        const estimatedTime = document.getElementById('estimatedTime');
+        const totalRequests = document.getElementById('totalRequests');
+        
+        // متغيرات النظام
+        let intervalId = null;
+        let sendCount = 0;
+        let totalCount = 0;
+        let isRunning = false;
+        
+        // إعدادات الألوان
+        colorPreview.style.backgroundColor = embedColor.value;
+        embedPreview.style.borderLeftColor = embedColor.value;
+        
+        // تبويبات
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                // إزالة النشط من جميع التبويبات
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // إضافة النشط للتبويب المحدد
+                tab.classList.add('active');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+        
+        // تحديث معاينة الإيمبد
+        function updateEmbedPreview() {
+            colorPreview.style.backgroundColor = embedColor.value;
+            embedPreview.style.borderLeftColor = embedColor.value;
+            
+            previewTitle.textContent = embedTitle.value || '(بدون عنوان)';
+            previewDescription.textContent = embedDescription.value || '(بدون وصف)';
+            previewFooter.textContent = embedFooter.value || '(بدون تذييل)';
+        }
+        
+        // تحديث المدة التقديرية
+        function updateEstimatedTime() {
+            const count = parseInt(repeatCount.value) || 0;
+            const interval = parseInt(intervalTime.value) || 0;
+            const totalSeconds = count * interval;
+            
+            if (totalSeconds < 60) {
+                estimatedTime.textContent = `${totalSeconds} ثانية`;
+            } else if (totalSeconds < 3600) {
+                estimatedTime.textContent = `${Math.round(totalSeconds / 60)} دقيقة`;
+            } else {
+                estimatedTime.textContent = `${Math.round(totalSeconds / 3600)} ساعة`;
+            }
+            
+            totalRequests.textContent = count;
+        }
+        
+        // تحديث الأحداث
+        embedColor.addEventListener('input', updateEmbedPreview);
+        embedTitle.addEventListener('input', updateEmbedPreview);
+        embedDescription.addEventListener('input', updateEmbedPreview);
+        embedFooter.addEventListener('input', updateEmbedPreview);
+        repeatCount.addEventListener('input', updateEstimatedTime);
+        intervalTime.addEventListener('input', updateEstimatedTime);
+        
+        // تحديث أولي
+        updateEmbedPreview();
+        updateEstimatedTime();
+        
+        // عرض حالة
+        function showStatus(message, type = 'info') {
+            const types = {
+                success: { icon: '✅', class: 'status-success' },
+                error: { icon: '❌', class: 'status-error' },
+                info: { icon: 'ℹ️', class: 'status-info' },
+                warning: { icon: '⚠️', class: 'status-info' }
+            };
+            
+            const status = types[type] || types.info;
+            
+            const statusItem = document.createElement('div');
+            statusItem.className = `status-item ${status.class}`;
+            statusItem.innerHTML = `
+                <span class="icon">${status.icon}</span>
+                <span>${message}</span>
+            `;
+            
+            statusDiv.insertBefore(statusItem, statusDiv.firstChild);
+            
+            // إزالة الرسائل القديمة
+            setTimeout(() => {
+                if (statusItem.parentNode) {
+                    statusItem.style.opacity = '0';
+                    statusItem.style.transform = 'translateX(-20px)';
+                    setTimeout(() => {
+                        if (statusItem.parentNode) {
+                            statusItem.parentNode.removeChild(statusItem);
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+        
+        // إضافة إلى السجل
+        function addToLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString('ar-SA');
+            const logEntry = document.createElement('div');
+            logEntry.style.marginBottom = '5px';
+            logEntry.style.padding = '5px';
+            logEntry.style.borderLeft = '3px solid';
+            logEntry.style.borderLeftColor = type === 'success' ? '#10b981' : 
+                                           type === 'error' ? '#ef4444' : '#3b82f6';
+            
+            logEntry.innerHTML = `[<span style="color: #94a3b8">${timestamp}</span>] ${message}`;
+            logContent.appendChild(logEntry);
+            logContent.scrollTop = logContent.scrollHeight;
+        }
+        
+        // إنشاء جسم الإيمبد
+        function createEmbedBody() {
+            const embedData = {
+                content: null,
+                embeds: []
+            };
+            
+            // إذا كان هناك إعدادات للإيمبد
+            if (embedTitle.value || embedDescription.value) {
+                const embed = {
+                    title: embedTitle.value || null,
+                    description: embedDescription.value || null,
+                    color: parseInt(embedColor.value.substring(1), 16),
+                    footer: embedFooter.value ? {
+                        text: embedFooter.value
+                    } : null,
+                    timestamp: new Date().toISOString()
+                };
+                
+                embedData.embeds.push(embed);
+                
+                // المحتوى العادي من حقل الرسالة
+                try {
+                    const parsed = JSON.parse(message.value);
+                    if (parsed.content) {
+                        embedData.content = parsed.content;
+                    }
+                } catch {
+                    // إذا لم يكن JSON، نستخدمه كمحتوى
+                    embedData.content = message.value;
+                }
+            } else {
+                // إذا لم يكن هناك إيمبد، استخدم الرسالة كما هي
+                try {
+                    embedData = JSON.parse(message.value);
+                } catch {
+                    embedData.content = message.value;
+                }
+            }
+            
+            return embedData;
+        }
+        
+        // إرسال ويب هوك
+        async function sendWebhook(isTest = false) {
+            const url = webhookUrl.value;
+            if (!url && !isTest) {
+                showStatus('⚠️ يرجى إدخال رابط ويب هوك صحيح', 'error');
+                return false;
+            }
+            
+            try {
+                const data = createEmbedBody();
+                
+                // تأخير عشوائي إذا تم تحديده
+                if (randomDelay.value > 0 && !isTest) {
+                    const delay = Math.random() * parseInt(randomDelay.value) * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+                
+                // إرسال الطلب
+                const response = await fetch(url || 'https://httpbin.org/post', {
+                    method: httpMethod.value,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const timestamp = new Date().toLocaleTimeString('ar-SA');
+                
+                if (isTest) {
+                    showStatus(`✅ اختبار ناجح! تم محاكاة الإرسال`, 'success');
+                    addToLog(`[اختبار] تم محاكاة الإرسال بنجاح`, 'success');
+                    return true;
+                }
+                
+                sendCount++;
+                totalCount++;
+                
+                if (response.ok) {
+                    showStatus(`✅ تم الإرسال #${sendCount} بنجاح`, 'success');
+                    addToLog(`#${sendCount} → ${response.status} ${response.statusText}`, 'success');
+                    return true;
+                } else {
+                    showStatus(`❌ فشل الإرسال #${sendCount} - ${response.status}`, 'error');
+                    addToLog(`#${sendCount} → خطأ: ${response.status} ${response.statusText}`, 'error');
+                    return false;
+                }
+                
+            } catch (error) {
+                const timestamp = new Date().toLocaleTimeString('ar-SA');
+                
+                if (!isTest) {
+                    sendCount++;
+                    totalCount++;
+                    showStatus(`❌ خطأ في الإرسال #${sendCount}: ${error.message}`, 'error');
+                    addToLog(`#${sendCount} → خطأ: ${error.message}`, 'error');
+                } else {
+                    showStatus(`❌ خطأ في الاختبار: ${error.message}`, 'error');
+                }
+                return false;
+            }
+        }
+        
+        // بدء الإرسال المتكرر
+        async function startSending() {
+            if (isRunning) return;
+            
+            if (!webhookUrl.value) {
+                showStatus('⚠️ يرجى إدخال رابط ويب هوك', 'error');
+                return;
+            }
+            
+            const count = parseInt(repeatCount.value) || 0;
+            const interval = parseInt(intervalTime.value) * 1000 || 5000;
+            
+            if (count <= 0) {
+                showStatus('⚠️ يرجى تحديد عدد مرات صحيح', 'error');
+                return;
+            }
+            
+            isRunning = true;
+            sendCount = 0;
+            
+            startBtn.style.display = 'none';
+            stopBtn.style.display = 'flex';
+            
+            showStatus(`🚀 بدأ الإرسال: ${count} مرة كل ${interval/1000} ثواني`, 'info');
+            addToLog(`🚀 بدأ الإرسال المتكرر (${count} × ${interval/1000}ث)`, 'info');
+            
+            // الإرسال الأول فوري
+            await sendWebhook();
+            
+            // الإرسال المتكرر
+            intervalId = setInterval(async () => {
+                if (sendCount >= count) {
+                    stopSending();
+                    showStatus('🎉 اكتمل الإرسال بنجاح!', 'success');
+                    return;
+                }
+                await sendWebhook();
+            }, interval);
+        }
+        
+        // إيقاف الإرسال
+        function stopSending() {
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+            }
+            
+            isRunning = false;
+            startBtn.style.display = 'flex';
+            stopBtn.style.display = 'none';
+            
+            showStatus('⏹️ تم إيقاف الإرسال', 'info');
+        }
+        
+        // اختبار إرسال واحد
+        async function testSend() {
+            showStatus('🧪 جاري اختبار الإرسال...', 'info');
+            await sendWebhook(true);
+        }
+        
+        // مسح السجل
+        function clearLog() {
+            logContent.innerHTML = '';
+            showStatus('🗑️ تم مسح سجل الإرسال', 'info');
+        }
+        
+        // أحداث الأزرار
+        startBtn.addEventListener('click', startSending);
+        stopBtn.addEventListener('click', stopSending);
+        testBtn.addEventListener('click', testSend);
+        clearLogBtn.addEventListener('click', clearLog);
+        
+        // إغلاق عند الخروج من الصفحة
+        window.addEventListener('beforeunload', (e) => {
+            if (isRunning) {
+                e.preventDefault();
+                e.returnValue = 'الإرسال لا يزال يعمل. هل تريد المغادرة؟';
+            }
+        });
+        
+        // إضافة أمثلة جاهزة
+        webhookUrl.placeholder = 'https://discord.com/api/webhooks/123456/abcdef...';
+        
+        // أمثلة للرسائل
+        const examples = [
+            '{"content": "🔔 إشعار جديد!", "username": "System Bot"}',
+            '{"content": "📊 تقرير يومي", "embeds": [{"title": "الإحصائيات", "description": "تفاصيل الإحصائيات هنا..."}]}',
+            '{"embeds": [{"title": "نجاح!", "description": "تم تنفيذ العملية بنجاح", "color": 5763719}]}'
+        ];
+        
+        message.placeholder = `مثال:\n${examples[0]}`;
+        
+        // رسالة ترحيبية
+        showStatus('مرحبًا! أدخل رابط ويب هوك واختر الإعدادات المناسبة', 'info');
+    </script>
+</body>
+</html>
